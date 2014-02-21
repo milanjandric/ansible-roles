@@ -2,14 +2,19 @@
   action: shell /usr/bin/getent passwd {{ user }} | /usr/bin/wc -l | tr -d ' '
   register: user_exist
 
+- name: Find users home directory
+  action: 'shell /usr/bin/getent passwd {{ user }} | /usr/bin/cut -d: -f6'
+  register: user_home_dir
+  when: user_exist.stdout == "1"
+
 - name: Set zsh as default shell for user - {{ user }}
   user: name={{ user }} shell=/bin/zsh state=present
   when: user_exist.stdout == "1"
 
 - name: Copy default profile file for user - {{ user }}
-  command: /bin/cp /etc/skel/.zshrc /home/{{ user }}/
+  command: /bin/cp /etc/skel/.zshrc {{ user_home_dir.stdout}}/
   when: user_exist.stdout == "1"
 
 - name: Set zsh profile file right permisions vafor user - {{ user }}
-  file: name=/home/{{ user }}/.zshrc state=file owner=vagrant group=vagrant
+  file: name="{{ user_home_dir.stdout}}/.zshrc" state=file owner=vagrant group=vagrant
   when: user_exist.stdout == "1"
