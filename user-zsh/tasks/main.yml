@@ -1,0 +1,15 @@
+- name: Check if user exists
+  action: shell /usr/bin/getent passwd {{ user }} | /usr/bin/wc -l | tr -d ' '
+  register: user_exist
+
+- name: Set zsh as default shell for user - {{ user }}
+  user: name={{ user }} shell=/bin/zsh state=present
+  when: user_exist.stdout == "1"
+
+- name: Copy default profile file for user - {{ user }}
+  command: /bin/cp /etc/skel/.zshrc /home/{{ user }}/
+  when: user_exist.stdout == "1"
+
+- name: Set zsh profile file right permisions vafor user - {{ user }}
+  file: name=/home/{{ user }}/.zshrc state=file owner=vagrant group=vagrant
+  when: user_exist.stdout == "1"
