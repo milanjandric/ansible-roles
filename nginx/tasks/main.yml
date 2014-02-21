@@ -1,0 +1,26 @@
+- name: add nginx apt-key
+  apt_key: data="{{ lookup('file', 'nginx.gpg') }}" state=present
+
+- name: add nginx repository
+  apt_repository: repo='deb http://nginx.org/packages/debian/ wheezy nginx' state=present
+
+- name: install nginx
+  apt: pkg=nginx state=latest
+  notify:
+    - restart nginx
+
+- name: configure nginx
+  copy: src=nginx.conf dest=/etc/nginx/nginx.conf owner=root group=root
+  notify:
+    - restart nginx
+
+- name: configure nginx proxy
+  copy: src=proxy.conf dest=/etc/nginx/conf.d/proxy.conf owner=root group=root
+  notify:
+    - restart nginx
+
+- name: create nginx sites-available
+  file: name=/etc/nginx/sites-available state=directory owner=root group=root
+
+- name: create nginx sites-enabled
+  file: name=/etc/nginx/sites-enabled state=directory owner=root group=root

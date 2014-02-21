@@ -1,0 +1,15 @@
+- name: Setup sudoers for vagrant
+  lineinfile: dest=/etc/sudoers
+               regexp='^vagrant ALL=\(ALL\) NOPASSWD:ALL'
+               line="vagrant ALL=(ALL) NOPASSWD:ALL"
+               state=present
+               insertafter=EOF
+
+#- name: Set zsh as default shell
+#  user: name=vagrant home=/vagrant shell=/etc/zsh state=present
+#
+#- name: Copy default profile file
+#  command: /bin/cp /etc/skel/.zshrc /vagrant/
+#
+#- name: Set zsh profile file right permisions
+#  file: name=/vagrant/.zshrc state=file owner=vagrant group=vagrant
