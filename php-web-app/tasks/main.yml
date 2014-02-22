@@ -1,5 +1,3 @@
-- debug: msg="hostvars={{app.index_file}}"
-
 - name: Create folder for document root - {{ app.document_root }}
   file: name={{ app.document_root }} owner={{ app.document_root_owner }} state=directory
 
