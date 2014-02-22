@@ -1,0 +1,48 @@
+server {
+  listen   {{ app.http_port }};
+  server_name {{ app.host_name }};
+
+  access_log  /var/log/nginx/{{ app.host_name }}-access.log;
+  error_log /var/log/nginx/{{ app.host_name }}-error.log;
+
+  client_max_body_size 100m;
+
+  root   {{ app.document_root }}{{ app.public_dir }};
+  index  {{ app.index_file }};
+
+  location / {
+    index {{ app.index_file }};
+    try_files $uri /{{ app.index_file }}?$args;
+  }
+
+  location ~ \.php($|/) {
+    set  $script $uri;
+    set  $path_info "";
+
+    if ($uri ~ "^(.+\.php)(/.*)") {
+            set  $script     $1;
+            set  $path_info  $2;
+    }
+
+    fastcgi_pass   unix:/var/run/php5-fpm.sock;
+    include        fastcgi_params;
+    fastcgi_param  PATH_INFO         $path_info;
+    fastcgi_param  SCRIPT_FILENAME   $document_root$script;
+    fastcgi_param  SCRIPT_NAME       $script;
+
+    fastcgi_temp_file_write_size 10m;
+    fastcgi_busy_buffers_size 512k;
+    fastcgi_buffer_size 512k;
+    fastcgi_buffers 16 512k;
+    fastcgi_connect_timeout 300;
+    fastcgi_send_timeout 300;
+    fastcgi_read_timeout 300;
+    fastcgi_intercept_errors on;
+    fastcgi_next_upstream error invalid_header timeout http_500;
+  }
+
+  ## Disable viewing .htaccess & .htpassword
+  location ~ /\.ht {
+      deny  all;
+  }
+}

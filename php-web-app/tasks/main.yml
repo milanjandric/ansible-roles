@@ -1,0 +1,14 @@
+- debug: msg="hostvars={{app.index_file}}"
+
+- name: Create folder for document root - {{ app.document_root }}
+  file: name={{ app.document_root }} owner={{ app.document_root_owner }} state=directory
+
+- name: Create nginx virtual host
+  action: template src=nginx_site.conf.j2 dest=/etc/nginx/sites-available/{{ app.name }}.conf
+  notify:
+    - restart nginx
+
+- name: link nginx config
+  action: file src=/etc/nginx/sites-available/{{ app.name }}.conf dest=/etc/nginx/sites-enabled/{{ app.name }}.conf state=link
+  notify:
+    - restart nginx 
