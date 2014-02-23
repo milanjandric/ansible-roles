@@ -47,9 +47,4 @@ server {
     fastcgi_intercept_errors on;
     fastcgi_next_upstream error invalid_header timeout http_500;
   }
-
-  ## Disable viewing .htaccess & .htpassword
-  location ~ /\.ht {
-      deny  all;
-  }
 }
