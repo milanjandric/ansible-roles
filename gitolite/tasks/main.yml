@@ -1,0 +1,17 @@
+- name: "Install gitolite"
+  action: "apt name=gitolite state=installed"
+
+- name: "Create gitolite user"
+  action: "user name=gitolite createhome=yes generate_ssh_key=no"
+
+- name: "Add initial gitolite rc file"
+  action: "copy dest={{ gitolite_home }}/.gitolite.rc src=gitolite.rc mode=0644 owner=gitolite group=gitolite"
+
+- name: "Create ssh directory"
+  action: "file dest={{ gitolite_home }}/.ssh state=directory mode=0700 owner=gitolite group=gitolite"
+
+- name: Copy public key keys
+  copy: src=id_rsa_gitolite.pub dest={{ gitolite_home}}/.ssh/id_rsa_gitolite.pub owner=gitolite group=gitolite mode=600
+
+- name: "Final gitolite setup"
+  action: "shell sudo -Hu gitolite /bin/bash -c '(cd {{ gitolite_home}} && gl-setup {{ gitolite_home }}/.ssh/id_rsa_gitolite.pub)'"
