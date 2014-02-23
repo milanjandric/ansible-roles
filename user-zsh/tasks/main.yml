@@ -16,5 +16,5 @@
   when: user_exist.stdout == "1"
 
 - name: Set zsh profile file right permisions vafor user - {{ user }}
-  file: name="{{ user_home_dir.stdout}}/.zshrc" state=file owner=vagrant group=vagrant
+  file: name="{{ user_home_dir.stdout}}/.zshrc" state=file owner={{ user }} group={{ user }}
   when: user_exist.stdout == "1"
