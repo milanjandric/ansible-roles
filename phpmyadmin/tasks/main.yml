@@ -1,0 +1,13 @@
+- name: download the source tarball
+  get_url: url=http://files.directadmin.com/services/all/phpMyAdmin/phpMyAdmin-{{ phpmyadmin_version }}-all-languages.tar.gz
+           dest=/var/www/phpmyadmin-{{ phpmyadmin_version }}.tar.gz
+           mode=0440
+  tags: phpmyadmin
+
+- name: unpack the source tarball
+  command: /bin/tar -xzf /var/www/phpmyadmin-{{ phpmyadmin_version }}.tar.gz  -C /var/www creates=/var/www/phpmyadmin
+  tags: phpmyadmin
+
+- name: rename the source directory
+  command: /bin/mv /var/www/phpMyAdmin-{{ phpmyadmin_version }}-all-languages /var/www/phpmyadmin creates=/var/www/phpmyadmin
+  tags: phpmyadmin

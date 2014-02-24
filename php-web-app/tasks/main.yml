@@ -2,10 +2,8 @@
   file: name={{ app.document_root }} owner={{ app.document_root_owner }} state=directory
 
 - name: Init repository
-  action: "shell /bin/bash -c '(cd {{ app.document_root }} && {{ app.repo_clone }} .)'"
+  action: command cd {{ app.document_root }} && {{ app.repo_clone }} creates={{ app.document_root}}/.git
   when: app.repo
-  action: "shell /bin/bash -c '(cd {{ app.document_root }} && git clone --local /home/gitolite/repositories/imscns.git .)'"
-  when: app.repo == 'yes'
 
 - name: Create nginx virtual host
   action: template src=nginx_site.conf.j2 dest=/etc/nginx/sites-available/{{ app.name }}.conf
