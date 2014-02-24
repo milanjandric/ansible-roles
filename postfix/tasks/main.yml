@@ -1,0 +1,30 @@
+- name: install postfix via apt
+  apt: pkg={{ item }}
+  with_items:
+    - postfix
+    - mailutils
+    - libsasl2-2
+    - libsasl2-modules
+    - ca-certificates
+  tags: postfix
+
+- name: copy config files
+  copy: src={{ item }} dest=/etc/postfix/{{ item }} owner=root group=root
+  with_items:
+    - main.cf
+    - master.cf
+  notify:
+    - restart postfix
+  tags: postfix
+
+- name: copy map files
+  copy: src={{ item }} dest=/etc/postfix/{{ item }} owner=root group=root
+  with_items: mapfiles
+  tags: postfix
+
+- name: run postmap to configure postfix lookup tables
+  shell: postmap /etc/postfix/{{ item }}
+  with_items: mapfiles
+  notify:
+    - restart postfix
+  tags: postfix
