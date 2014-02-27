@@ -7,6 +7,9 @@
 - name: Commmon | libsqlite3-dev
   apt: pkg=libsqlite3-dev state=latest
 
+- name: Common | ruby 1.9.3
+  apt: pkg=ruby1.9.3 state=latest
+
 - name: Common | Install rubygems package
   apt: pkg=rubygems state=installed
 
